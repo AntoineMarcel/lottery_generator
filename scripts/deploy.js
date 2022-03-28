@@ -16,10 +16,10 @@ const main = async () => {
   await nftCollection.awardItem(deployer.address, "https://api.npoint.io/39d6082ace05aa3bd768");
   await nftCollection.awardItem(deployer.address, "https://api.npoint.io/1ccb83057ef8120d3959");
   
-  const UsingERC20 = await hre.ethers.getContractFactory("LotteryGenerator");
-  const usingERC20 = await UsingERC20.deploy(customToken.address, nftCollection.address);
-  await usingERC20.deployed();
-  console.log("\nUsingERC20 deployed to:", usingERC20.address);
+  const LotteryGenerator = await hre.ethers.getContractFactory("LotteryGenerator");
+  const lotteryGenerator = await LotteryGenerator.deploy(customToken.address, nftCollection.address);
+  await lotteryGenerator.deployed();
+  console.log("\Lottery generator deployed to:", lotteryGenerator.address);
 };
 
 const runMain = async () => {
