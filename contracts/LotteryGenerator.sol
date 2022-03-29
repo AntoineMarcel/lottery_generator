@@ -6,7 +6,23 @@ import "hardhat/console.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 
-contract LotteryGenerator{
+import "@chainlink/contracts/src/v0.8/interfaces/LinkTokenInterface.sol";
+import "@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface.sol";
+import "@chainlink/contracts/src/v0.8/VRFConsumerBaseV2.sol";
+
+contract LotteryGenerator is VRFConsumerBaseV2{
+    VRFCoordinatorV2Interface COORDINATOR;
+    LinkTokenInterface LINKTOKEN;
+    uint64 s_subscriptionId = 2042;
+    address vrfCoordinator = 0x6168499c0cFfCaCD319c818142124B7A15E857ab;
+    address link = 0x01BE23585060835E02B77ef475b0Cc51aA1e0709;
+    bytes32 keyHash = 0xd89b2bf150e3b9e13446986e571fb9cab24b13cea0a43ea20a6049a85cc807cc;
+    uint32 callbackGasLimit = 1000000;
+    uint16 requestConfirmations = 3;
+    uint256 public s_requestId;
+    address public s_owner;
+    address gelato_ops = 0x8c089073A9594a4FB03Fa99feee3effF0e2Bc58a;
+
     IERC20 public associatedToken;
     IERC721 public associatedCollection;
 
@@ -27,11 +43,32 @@ contract LotteryGenerator{
 
     lotteryStruct[] lotteries;
 
-    constructor(address _associatedToken,address _associatedCollection){
+    constructor(address _associatedToken,address _associatedCollection) VRFConsumerBaseV2(vrfCoordinator) {
         associatedToken = IERC20(_associatedToken);
         associatedCollection = IERC721(_associatedCollection);
+        COORDINATOR = VRFCoordinatorV2Interface(vrfCoordinator);
+        LINKTOKEN = LinkTokenInterface(link);
+        s_owner = msg.sender;
     }
 
+    function requestRandomWords() external onlyOwner {
+        s_requestId = COORDINATOR.requestRandomWords(
+            keyHash,
+            s_subscriptionId,
+            requestConfirmations,
+            callbackGasLimit,
+            uint32(lotteries.length)
+        );
+    }
+
+    function fulfillRandomWords(uint256, uint256[] memory randomWords) internal override {
+        endLotteries(randomWords);
+    }
+
+    modifier onlyOwner() {
+        require(msg.sender == s_owner || msg.sender == gelato_ops);
+        _;
+    }
     function launchLottery(uint256 _tokenPrizeId, uint256 _entryPrice, uint256 _duration) public {
         require(associatedCollection.ownerOf(_tokenPrizeId) == msg.sender, "You don't own the token");
         require(_duration >= 1, "The lottery must last more than 1 day");
@@ -43,7 +80,7 @@ contract LotteryGenerator{
         emit NewLot(lotteryStruct(msg.sender,_tokenPrizeId, _emptyPlayers,_entryPrice, 0, address(0), block.timestamp, _lotteryEnd, false));
     }
 
-    function endLotteries(uint256[] memory randomWords) public {
+    function endLotteries(uint256[] memory randomWords) private {
         uint8 _numWords = 0;
 
         for (uint256 index = 0; index < lotteries.length; index++) {
