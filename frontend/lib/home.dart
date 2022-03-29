@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_web3/flutter_web3.dart';
+import 'package:frontend/utils.dart';
+import 'package:frontend/new.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key, required this.isConnected}) : super(key: key);
@@ -23,6 +25,10 @@ class _MyHomePageState extends State<MyHomePage> {
       try {
         final accs = await ethereum!.requestAccount();
         accs;
+        lotteryContract =
+            Contract(lotteryAddress, lotteryAbi, provider!.getSigner());
+        nftContract = Contract(nftAddress, nftAbi, provider!.getSigner());
+        tokenContract = ContractERC20(tokenAddress, provider!.getSigner());
         setState(() => isConnected = true);
       } on EthereumUserRejected {
         print('User rejected the modal');
@@ -63,5 +69,17 @@ class _MyHomePageState extends State<MyHomePage> {
             ],
           ),
         ),
+        floatingActionButton: !isConnected
+            ? null
+            : FloatingActionButton(
+                backgroundColor: Colors.deepPurple,
+                onPressed: () async {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const NewLottery()),
+                  );
+                },
+                child: const Icon(Icons.add),
+              ),
       );
 }

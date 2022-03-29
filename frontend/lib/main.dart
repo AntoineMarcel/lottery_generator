@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/home.dart';
+import 'package:frontend/utils.dart';
+import 'package:flutter/services.dart';
 
 void main() async {
   bool _isConnected = false;
+  WidgetsFlutterBinding.ensureInitialized();
+  lotteryAbi = await rootBundle.loadString("assets/LotteryGenerator.json");
+  nftAbi = await rootBundle.loadString("assets/NFTCollection.json");
 
   runApp(MaterialApp(
     theme: ThemeData(brightness: Brightness.light),
