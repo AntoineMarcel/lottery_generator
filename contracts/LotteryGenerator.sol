@@ -74,7 +74,7 @@ contract LotteryGenerator is VRFConsumerBaseV2{
         require(_duration >= 1, "The lottery must last more than 1 day");
         associatedCollection.transferFrom(msg.sender, address(this), _tokenPrizeId);
 
-        uint256 _lotteryEnd = block.timestamp + (_duration * 1 seconds);
+        uint256 _lotteryEnd = block.timestamp + (_duration * 1 days);
         address[] memory _emptyPlayers;
         lotteries.push(lotteryStruct(msg.sender,_tokenPrizeId,_emptyPlayers,_entryPrice, 0, address(0), block.timestamp, _lotteryEnd, false));
         emit NewLot(lotteryStruct(msg.sender,_tokenPrizeId, _emptyPlayers,_entryPrice, 0, address(0), block.timestamp, _lotteryEnd, false));
