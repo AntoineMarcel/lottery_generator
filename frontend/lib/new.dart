@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_web3/flutter_web3.dart';
+import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:frontend/utils.dart';
 
 class NewLottery extends StatefulWidget {
-  const NewLottery({Key? key}) : super(key: key);
-
+  const NewLottery(this.assets, {Key? key}) : super(key: key);
+  final List<dynamic> assets;
   @override
   State<NewLottery> createState() => _NewLottery();
 }
@@ -45,7 +46,25 @@ class _NewLottery extends State<NewLottery> {
               key: _formKey,
               child: Column(
                 children: [
-                  intInput(context, "nft", "ID of the nft you own"),
+                  FormBuilderChoiceChip(
+                    name: 'nft',
+                    selectedColor: Colors.deepPurple,
+                    decoration: const InputDecoration(
+                        labelText: 'Select the nft prize'),
+                    options: [
+                      for (var asset in widget.assets)
+                        FormBuilderFieldOption(
+                            value: asset,
+                            child: Image.network(
+                              asset["image"],
+                              width: 100,
+                              height: 100,
+                              fit: BoxFit.contain,
+                            )),
+                    ],
+                    validator: FormBuilderValidators.compose(
+                        [FormBuilderValidators.required(context)]),
+                  ),
                   Padding(
                     padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
                     child: intInput(context, "price", "Price of the ticket"),
@@ -62,8 +81,8 @@ class _NewLottery extends State<NewLottery> {
                               try {
                                 if (_formKey.currentState!.validate()) {
                                   if (await _create(
-                                    int.parse(_formKey
-                                        .currentState!.fields["nft"]!.value),
+                                    _formKey.currentState!.fields["nft"]!
+                                        .value["id"],
                                     int.parse(_formKey
                                         .currentState!.fields["price"]!.value),
                                     int.parse(_formKey.currentState!

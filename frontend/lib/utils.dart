@@ -4,9 +4,9 @@ import 'package:flutter_web3/flutter_web3.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 
-String tokenAddress = "0x7fB31050367377b3408f0AE011b4B1587c0305eB";
-String nftAddress = "0xF81986B5303126565bDf6746662a4415c519bB23";
-String lotteryAddress = "0x24F21B45531D995b480C8b2C413f3A058C40EF48";
+String tokenAddress = "0xD2a6b411b8235e92Ea8FeB95821800C467e10eE0";
+String nftAddress = "0x4aF96CFC918988aE2852B25aB52583c604E63EAe";
+String lotteryAddress = "0x43F4Bc4A9138673d3CF15933b28247338D4af964";
 String speedyNode =
     "https://speedy-nodes-nyc.moralis.io/4ca02b18c4782872b71cc119/eth/rinkeby";
 

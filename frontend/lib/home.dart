@@ -249,9 +249,28 @@ class _MyHomePageState extends State<MyHomePage> {
             : FloatingActionButton(
                 backgroundColor: Colors.deepPurple,
                 onPressed: () async {
+                  List<dynamic> assets = [];
+
+                  String currentAddress =
+                      await provider!.getSigner().getAddress();
+                  int balance = int.parse(
+                      (await nftContract.call("balanceOf", [currentAddress]))
+                          .toString());
+
+                  for (var i = 0; i < balance; i++) {
+                    int tokenIndex = int.parse((await nftContract
+                            .call("tokenOfOwnerByIndex", [currentAddress, i]))
+                        .toString());
+                    String tokenURI =
+                        await nftContract.call("tokenURI", [tokenIndex]);
+                    String readURI = await http.read(Uri.parse(tokenURI));
+                    dynamic asset = jsonDecode(readURI);
+                    asset['id'] = tokenIndex;
+                    assets.add(asset);
+                  }
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const NewLottery()),
+                    MaterialPageRoute(builder: (context) => NewLottery(assets)),
                   );
                 },
                 child: const Icon(Icons.add),
