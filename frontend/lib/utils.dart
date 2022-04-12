@@ -7,8 +7,6 @@ import 'package:form_builder_validators/form_builder_validators.dart';
 String tokenAddress = "0x64140fF86d6f6C5A1f4Ea67BE862EC3813Fb6319";
 String nftAddress = "0x1fa992F14332bdeCdf44E5a3A05530599890c039";
 String lotteryAddress = "0x554F68e0C3556227215ae52685fA3d3878db1aa6";
-String speedyNode =
-    "https://speedy-nodes-nyc.moralis.io/4ca02b18c4782872b71cc119/polygon/mumbai";
 
 late Contract lotteryContract;
 late Contract nftContract;

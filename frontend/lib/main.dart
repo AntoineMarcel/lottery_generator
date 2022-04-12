@@ -6,11 +6,13 @@ import 'package:http/http.dart' as http;
 import 'package:frontend/home.dart';
 import 'package:frontend/utils.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 void main() async {
   bool _isConnected = false;
   dynamic _provider;
-  print((await provider!.getNetwork()).name);
+  await dotenv.load(fileName: ".env");
+
   if (ethereum != null &&
       ethereum!.isConnected() &&
       (await provider!.getNetwork()).name == "maticmum") {
@@ -22,7 +24,7 @@ void main() async {
       _provider = provider!;
     }
   } else {
-    _provider = JsonRpcProvider(speedyNode);
+    _provider = JsonRpcProvider(dotenv.env['SPEEDY_NODE']);
   }
 
   WidgetsFlutterBinding.ensureInitialized();
