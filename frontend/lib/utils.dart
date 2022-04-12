@@ -4,16 +4,18 @@ import 'package:flutter_web3/flutter_web3.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 
-String tokenAddress = "0xD2a6b411b8235e92Ea8FeB95821800C467e10eE0";
-String nftAddress = "0x4aF96CFC918988aE2852B25aB52583c604E63EAe";
-String lotteryAddress = "0x43F4Bc4A9138673d3CF15933b28247338D4af964";
+String tokenAddress = "0x64140fF86d6f6C5A1f4Ea67BE862EC3813Fb6319";
+String nftAddress = "0x1fa992F14332bdeCdf44E5a3A05530599890c039";
+String lotteryAddress = "0x554F68e0C3556227215ae52685fA3d3878db1aa6";
 String speedyNode =
-    "https://speedy-nodes-nyc.moralis.io/4ca02b18c4782872b71cc119/eth/rinkeby";
+    "https://speedy-nodes-nyc.moralis.io/4ca02b18c4782872b71cc119/polygon/mumbai";
 
 late Contract lotteryContract;
 late Contract nftContract;
 late ContractERC20 tokenContract;
 late String tokenSymbol;
+late String owner;
+late String connected;
 late String nftAbi;
 late String lotteryAbi;
 

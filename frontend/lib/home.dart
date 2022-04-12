@@ -47,10 +47,10 @@ class _MyHomePageState extends State<MyHomePage> {
 
     lotteryContract.on("EndedLot", (lot, event) async {
       LotteryStruct toRefresh = lotteries.singleWhere(
-          (element) => element.tokenId == int.parse(lot[0].toString()));
+          (element) => element.tokenId == int.parse(lot[1].toString()));
       setState(() {
         toRefresh.ended = true;
-        toRefresh.winner = lot[4];
+        toRefresh.winner = lot[5];
       });
     });
 
@@ -86,17 +86,28 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _connectMetamask() async {
     if (ethereum != null) {
-      try {
-        final accs = await ethereum!.requestAccount();
-        accs;
-        lotteryContract =
-            Contract(lotteryAddress, lotteryAbi, provider!.getSigner());
-        nftContract = Contract(nftAddress, nftAbi, provider!.getSigner());
-        tokenContract = ContractERC20(tokenAddress, provider!.getSigner());
-        setState(() => isConnected = true);
-      } on EthereumUserRejected {
-        print('User rejected the modal');
+      if ((await provider!.getNetwork()).name == "maticmum") {
+        try {
+          final accs = await ethereum!.requestAccount();
+          accs;
+          lotteryContract =
+              Contract(lotteryAddress, lotteryAbi, provider!.getSigner());
+          nftContract = Contract(nftAddress, nftAbi, provider!.getSigner());
+          tokenContract = ContractERC20(tokenAddress, provider!.getSigner());
+          connected = await provider!.getSigner().getAddress();
+          setState(() => isConnected = true);
+        } on EthereumUserRejected {
+          print('User rejected the modal');
+        }
       }
+    }
+  }
+
+  void _endLotteries() async {
+    if (owner == connected) {
+      TransactionResponse _endLotteries =
+          await lotteryContract.send('getRandomNumber');
+      await _endLotteries.wait();
     }
   }
 
@@ -107,7 +118,16 @@ class _MyHomePageState extends State<MyHomePage> {
           actions: [
             ethereum != null
                 ? isConnected
-                    ? Container()
+                    ? owner == connected
+                        ? Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: ElevatedButton.icon(
+                              onPressed: () => _endLotteries(),
+                              icon: const Icon(Icons.stop_circle),
+                              label: const Text("End lotteries"),
+                            ),
+                          )
+                        : Container()
                     : Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: ElevatedButton.icon(

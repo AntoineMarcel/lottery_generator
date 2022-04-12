@@ -10,12 +10,13 @@ import 'package:flutter/services.dart';
 void main() async {
   bool _isConnected = false;
   dynamic _provider;
-
+  print((await provider!.getNetwork()).name);
   if (ethereum != null &&
       ethereum!.isConnected() &&
-      (await provider!.getNetwork()).name == "rinkeby") {
+      (await provider!.getNetwork()).name == "maticmum") {
     if ((await ethereum!.getAccounts()).isNotEmpty) {
       _provider = provider!.getSigner();
+      connected = await provider!.getSigner().getAddress();
       _isConnected = true;
     } else {
       _provider = provider!;
@@ -32,6 +33,7 @@ void main() async {
   nftContract = Contract(nftAddress, nftAbi, _provider);
   tokenContract = ContractERC20(tokenAddress, _provider);
   tokenSymbol = await tokenContract.symbol;
+  owner = await lotteryContract.call("owner");
 
   var _lotteries = await lotteryContract.call('getAllLoteries');
 
